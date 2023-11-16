@@ -1,0 +1,40 @@
+# SageMath code
+
+mt = matrix(Zmod(2), 64, 64) 
+record_rank = [0]*65
+count_const = 0
+count_rank = 0
+
+
+f = open("6-round_Ascon_31-dim_cube.txt")
+lines = f.readlines()
+f.close()
+
+
+for i in range(1000):
+    for j in range(i*66+2,(i+1)*66):
+        if len(lines[j])==2:
+            count_const+=1
+            for k in range(64):
+                mt[j-i*66-2,k] = 0
+        else:
+            num=[0]*64
+            for k in range(len(lines[j])-1):
+                if lines[j][k] == 'k':
+                    temp = 0
+                elif lines[j][k] == '+':
+                    num[temp] = 1
+                else:
+                    temp = temp * 10 + int(lines[j][k])
+            for k in range(64):
+                mt[j-i*66-2,k] = num[k]
+    m = mt.rank()
+    count_rank += m
+    record_rank[m]+=1
+
+print("Average of Non-constant:",64-count_const/1000.0)
+print("Average of rank:",count_rank/1000.0)
+
+for i in range(65):
+    if record_rank[i] != 0:
+        print(i,": ", record_rank[i])
